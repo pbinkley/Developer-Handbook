@@ -21,9 +21,11 @@ The Secure Shell (SSH) Protocol is a protocol for secure remote login and other 
 
 The recommended way to authenticate and communicate over ssh is through public/private key pairs. You share your public key with a server and it is stored in .ssh/authorized_keys.  Keep your private key secret and on your desktop machine (in your ~/.ssh/ directory).
 
-These keys can be created with Linux command-line tools. In a Windows environment, they can be created using the equivalent tools in [[Cygwin](https://www.cygwin.com/)], or [[using PuttyGen](http://www.rackspace.com/knowledge_center/article/generating-rsa-keys-with-ssh-puttygen)].
+If you have already shared a public key with the sysadmins and are using it to connect to servers using ssh or Putty, you should use that key. Otherwise you need to create a new key.
 
-To create your keys: 
+These keys can be created with Linux command-line tools. In a Windows environment, they can be created using the equivalent tools in [[Cygwin](https://www.cygwin.com/)], or [using PuttyGen](http://www.rackspace.com/knowledge_center/article/generating-rsa-keys-with-ssh-puttygen).
+
+To create your keys with Linux command-line tools: 
 
 ```ssh-keygen -t rsa ```
 
@@ -34,22 +36,36 @@ ls ~/.ssh
 id_rsa id_rsa.pub
 ```
 
-To use these as credentials:
+To create your keys with PuttyGen, select type "SSH-2 RSA" and click "Generate". Save your private key with a name like "<yourname>.ppk" and your public key with a name like "<yourname>.pub". Send a copy of the public key to the sysadmins to install in servers or the golden image. Now export an OpenSSH version of your private key: click the "Conversions" tab, and select "Export OpenSSH Key". Give it a name like "<yourname>-openssh.ppk" and save it in your .ssh directory.
 
-1. share your public key (**id_rsa.pub**) with your friendly neighborhood systems administrator:
+If you have already created a key pair with PuttyGen, all you need to do is the final step: export it to an OpenSSH key.
+
+To use these as credentials in Linux or Cygwin:
+
+1. share your public key (**id_rsa.pub** or **<yourname>.pub**) with your friendly neighborhood systems administrator:
 2. before attempting to login for the first time in a session (hint add it to your bash profile)
  
   ```
   ssh-add
   ``` 
 
+If you are using Cygwin and you get the error "Could not open a connection to your authentication agent.", start the agent with 
+
+  ```
+  eval `ssh-agent -s`
+  ```
+  
+and then load the key with
+
+  ```
+  ssh-add /cygdrive/h/.ssh/<yourname>-openssh.ppk
+  ```
+  
 3. to see which keys are currently loaded 
 
   ```
   ssh-add -l
   ```
-
-In Windows you can [[use Pageant](http://the.earth.li/~sgtatham/putty/0.60/htmldoc/Chapter9.html#pageant)] to load your key for use by Putty.
 
 DevOps
 ------
